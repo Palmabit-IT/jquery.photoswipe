@@ -4,14 +4,14 @@ import PhotoSwipeUI_Default from 'PhotoSwipeUI_Default';
 
 function PhotoSwipeMounter($) {
     var $defaultGallery = $('<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true"><div class="pswp__bg"></div><div class="pswp__scroll-wrap"><div class="pswp__container"><div class="pswp__item"></div><div class="pswp__item"></div><div class="pswp__item"></div></div><div class="pswp__ui pswp__ui--hidden"><div class="pswp__top-bar"><div class="pswp__counter"></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button> <button class="pswp__button pswp__button--share" title="Share"></button> <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button> <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class="pswp__share-tooltip"></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button> <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class="pswp__caption"><div class="pswp__caption__center"></div></div></div></div></div>')
-            .appendTo('body'),
-        uid             = 1;
+        .appendTo('body'),
+        uid = 1;
 
     function getImgs($gallery) {
         var slideSelector = getOptions($gallery).slideSelector;
 
         return $gallery.find(slideSelector).map(function (index) {
-            var $img    = $(this).data('index', index),
+            var $img = $(this).data('index', index),
                 tagName = this.tagName.toUpperCase();
 
             if (tagName === 'A') {
@@ -32,16 +32,16 @@ function PhotoSwipeMounter($) {
 
     function getThumbBoundsFn($imgs) {
         return function _getThumbBoundsFn(index) {
-            var $img      = $imgs.eq(index),
+            var $img = $imgs.eq(index),
                 imgOffset = $img.offset(),
-                imgWidth  = $img[0].width;
+                imgWidth = $img[0].width;
 
             return {x: imgOffset.left, y: imgOffset.top, w: imgWidth};
         };
     }
 
     function getWH(wh, $img) {
-        var d        = $.Deferred(),
+        var d = $.Deferred(),
             wh_value = $img.data(`original-src-${wh}`);
 
         if (wh_value) {
@@ -64,25 +64,26 @@ function PhotoSwipeMounter($) {
     }
 
     function getImgSize($img) {
-        var original_src = decodeURI($img.data('original-src') || $img.attr('src')),
-            matches      = original_src.match(/(\d+)[*×x](\d+)/);
+        if ($img.attr('photoswipe-disable-read-filename') == undefined) {
+            var original_src = decodeURI($img.data('original-src') || $img.attr('src')),
+                matches = original_src.match(/(\d+)[*×x](\d+)/);
 
-        if (matches !== null) {
-            // resolve width and height by file name
-            let d = $.Deferred();
-            setTimeout(function () {
-                d.resolve(Number(matches[1]), Number(matches[2]));
-            }, 0);
-            return d.promise();
+            if (matches !== null) {
+                // resolve width and height by file name
+                let d = $.Deferred();
+                setTimeout(function () {
+                    d.resolve(Number(matches[1]), Number(matches[2]));
+                }, 0);
+                return d.promise();
+            }
         }
-
         return $.when(getWidth($img), getHeight($img));
     }
 
     function getImgInfo() {
-        var $img         = $(this),
+        var $img = $(this),
             original_src = $img.data('original-src') || $img.attr('src'),
-            d            = $.Deferred();
+            d = $.Deferred();
 
         if (this.tagName !== 'IMG') {
             d.resolve({
@@ -106,7 +107,7 @@ function PhotoSwipeMounter($) {
 
     function getImgInfoArray($imgs) {
         var imgInfoArray = $imgs.map(getImgInfo).get(),
-            d            = $.Deferred();
+            d = $.Deferred();
 
         $.when.apply($, imgInfoArray).done(function () {
             var imgInfoArray = Array.prototype.slice.call(arguments);
@@ -127,7 +128,7 @@ function PhotoSwipeMounter($) {
     }
 
     function openPhotoSwipe(index, $gallery, $imgs, imgInfoArray) {
-        var options    = $.extend(getOptions($gallery).globalOptions, {index: index, getThumbBoundsFn: getThumbBoundsFn($imgs), galleryUID: $gallery.data('pswp-uid')}),
+        var options = $.extend(getOptions($gallery).globalOptions, {index: index, getThumbBoundsFn: getThumbBoundsFn($imgs), galleryUID: $gallery.data('pswp-uid')}),
             photoSwipe = new PhotoSwipe($defaultGallery[0], PhotoSwipeUI_Default, imgInfoArray, options);
 
         $.each(getOptions($gallery).events, function (eventName, eventHandler) {
@@ -139,7 +140,7 @@ function PhotoSwipeMounter($) {
 
     // parse picture index and gallery index from URL (#&pid=1&gid=2)
     function photoswipeParseHash() {
-        var hash   = window.location.hash.substring(1),
+        var hash = window.location.hash.substring(1),
             params = {};
 
         if (hash.length < 5) {
@@ -165,9 +166,9 @@ function PhotoSwipeMounter($) {
         // Parse URL and open gallery if it contains #&pid=3&gid=1
         var hashData = photoswipeParseHash();
         if (hashData.pid && hashData.gid) {
-            let $gallery            = $galleries[hashData.gid - 1],
-                pid                 = hashData.pid - 1,
-                $imgs               = getImgs($gallery),
+            let $gallery = $galleries[hashData.gid - 1],
+                pid = hashData.pid - 1,
+                $imgs = getImgs($gallery),
                 imgInfoArrayPromise = getImgInfoArray($imgs);
 
             imgInfoArrayPromise.done(function (imgInfoArray) {
@@ -188,7 +189,7 @@ function PhotoSwipeMounter($) {
     }
 
     function update($gallery) {
-        var $imgs               = getImgs($gallery),
+        var $imgs = getImgs($gallery),
             imgInfoArrayPromise = getImgInfoArray($imgs);
 
         imgInfoArrayPromise.done(function (imgInfoArray) {
@@ -202,12 +203,12 @@ function PhotoSwipeMounter($) {
                 bgOpacity: 0.973,
                 showHideOpacity: true
             },
-            globalOptions  = $.extend(defaultOptions, options);
+            globalOptions = $.extend(defaultOptions, options);
 
 
         // Initialize each gallery
         var $galleries = [],
-            isUpdate   = slideSelector === 'update';
+            isUpdate = slideSelector === 'update';
 
         this.each(function () {
             if (isUpdate) {
@@ -215,8 +216,8 @@ function PhotoSwipeMounter($) {
                 return;
             }
 
-            var $gallery            = $(this).data('photoswipeOptions', {slideSelector: slideSelector, globalOptions: globalOptions, events: events}), // save options
-                $imgs               = getImgs($gallery),
+            var $gallery = $(this).data('photoswipeOptions', {slideSelector: slideSelector, globalOptions: globalOptions, events: events}), // save options
+                $imgs = getImgs($gallery),
                 imgInfoArrayPromise = getImgInfoArray($imgs);
 
 

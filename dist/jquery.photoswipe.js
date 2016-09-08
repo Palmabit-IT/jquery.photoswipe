@@ -4335,22 +4335,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 },{}],3:[function(require,module,exports){
 'use strict';
 
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.PhotoSwipe = exports.default = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+    return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
 
-var _PhotoSwipe = require('/Applications/MAMP/htdocs/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe.js');
+var _PhotoSwipe = require('/Library/WebServer/WebServer/packages/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe.js');
 
 var _PhotoSwipe2 = _interopRequireDefault(_PhotoSwipe);
 
-var _PhotoSwipeUI_Default = require('/Applications/MAMP/htdocs/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe-ui-default.js');
+var _PhotoSwipeUI_Default = require('/Library/WebServer/WebServer/packages/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe-ui-default.js');
 
 var _PhotoSwipeUI_Default2 = _interopRequireDefault(_PhotoSwipeUI_Default);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
 
 function PhotoSwipeMounter($) {
     var $defaultGallery = $('<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true"><div class="pswp__bg"></div><div class="pswp__scroll-wrap"><div class="pswp__container"><div class="pswp__item"></div><div class="pswp__item"></div><div class="pswp__item"></div></div><div class="pswp__ui pswp__ui--hidden"><div class="pswp__top-bar"><div class="pswp__counter"></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button> <button class="pswp__button pswp__button--share" title="Share"></button> <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button> <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class="pswp__share-tooltip"></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button> <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class="pswp__caption"><div class="pswp__caption__center"></div></div></div></div></div>').appendTo('body'),
@@ -4412,24 +4420,25 @@ function PhotoSwipeMounter($) {
     }
 
     function getImgSize($img) {
-        var original_src = decodeURI($img.data('original-src') || $img.attr('src')),
-            matches = original_src.match(/(\d+)[*×x](\d+)/);
+        if ($img.attr('photoswipe-disable-read-filename') == undefined) {
+            var original_src = decodeURI($img.data('original-src') || $img.attr('src')),
+                matches = original_src.match(/(\d+)[*×x](\d+)/);
 
-        if (matches !== null) {
-            var _ret = function () {
-                // resolve width and height by file name
-                var d = $.Deferred();
-                setTimeout(function () {
-                    d.resolve(Number(matches[1]), Number(matches[2]));
-                }, 0);
-                return {
-                    v: d.promise()
-                };
-            }();
+            if (matches !== null) {
+                var _ret = function () {
+                    // resolve width and height by file name
+                    var d = $.Deferred();
+                    setTimeout(function () {
+                        d.resolve(Number(matches[1]), Number(matches[2]));
+                    }, 0);
+                    return {
+                        v: d.promise()
+                    };
+                }();
 
-            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+            }
         }
-
         return $.when(getWidth($img), getHeight($img));
     }
 
@@ -4574,7 +4583,8 @@ function PhotoSwipeMounter($) {
             }
 
             var $gallery = $(this).data('photoswipeOptions', { slideSelector: slideSelector, globalOptions: globalOptions, events: events }),
-                // save options
+
+            // save options
             $imgs = getImgs($gallery),
                 imgInfoArrayPromise = getImgInfoArray($imgs);
 
@@ -4606,4 +4616,4 @@ function PhotoSwipeMounter($) {
 exports.default = PhotoSwipeMounter;
 exports.PhotoSwipe = _PhotoSwipe2.default;
 
-},{"/Applications/MAMP/htdocs/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe-ui-default.js":1,"/Applications/MAMP/htdocs/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe.js":2}]},{},[3]);
+},{"/Library/WebServer/WebServer/packages/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe-ui-default.js":1,"/Library/WebServer/WebServer/packages/jquery.photoswipe/node_modules/photoswipe/dist/photoswipe.js":2}]},{},[3]);
